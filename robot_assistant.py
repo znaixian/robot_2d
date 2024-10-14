@@ -1,7 +1,6 @@
 import speech_recognition as sr
 import pyttsx3
 import nltk
-import pygame
 import logging
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -19,7 +18,6 @@ class RobotAssistant:
         self.recognizer = sr.Recognizer()
         self.engine = pyttsx3.init()
         self.position = [400, 300]  # Starting position (center of the screen)
-        self.screen = None
         self.running = True
 
     def listen(self):
@@ -47,17 +45,17 @@ class RobotAssistant:
 
         if 'move' in filtered_tokens:
             if 'up' in filtered_tokens:
-                self.position[1] -= 50
-                return "Moving up"
+                self.position[1] = max(20, self.position[1] - 20)
+                return "Moving up 20 centimeters"
             elif 'down' in filtered_tokens:
-                self.position[1] += 50
-                return "Moving down"
+                self.position[1] = min(580, self.position[1] + 20)
+                return "Moving down 20 centimeters"
             elif 'left' in filtered_tokens:
-                self.position[0] -= 50
-                return "Moving left"
+                self.position[0] = max(20, self.position[0] - 20)
+                return "Moving left 20 centimeters"
             elif 'right' in filtered_tokens:
-                self.position[0] += 50
-                return "Moving right"
+                self.position[0] = min(780, self.position[0] + 20)
+                return "Moving right 20 centimeters"
         elif 'stop' in filtered_tokens:
             self.running = False
             return "Stopping the program"
@@ -68,28 +66,6 @@ class RobotAssistant:
         logging.info(f"Speaking: {text}")
         self.engine.say(text)
         self.engine.runAndWait()
-
-    def update_display(self):
-        self.screen.fill((255, 255, 255))
-        pygame.draw.circle(self.screen, (255, 0, 0), self.position, 20)
-        pygame.display.flip()
-
-    def run(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode((800, 600))
-        pygame.display.set_caption("Robot Assistant")
-
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-
-            command = self.listen()
-            response = self.process_command(command)
-            self.speak(response)
-            self.update_display()
-
-        pygame.quit()
 
 if __name__ == "__main__":
     robot = RobotAssistant()
