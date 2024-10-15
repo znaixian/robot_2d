@@ -24,18 +24,19 @@ class RobotSimulation:
         self.initialize_pygame()
         self.robot.start_listening()
 
-        last_response = "Waiting for command..."
+        last_action = "Waiting for command..."
         while self.robot.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.robot.running = False
 
-            response = self.robot.process_command()
-            if response:
-                last_response = response
+            action, response = self.robot.process_command()
+            if action:
+                last_action = action
                 self.robot.speak(response)
+                print(f"Action: {action}, Response: {response}")  # Debug print
 
-            self.update_display(last_response)
+            self.update_display(last_action)
             self.clock.tick(30)
 
         self.robot.stop_listening()
@@ -63,14 +64,14 @@ class RobotSimulation:
         pygame.draw.rect(self.screen, (0, 0, 255), (x - ROBOT_WIDTH//4, y + ROBOT_HEIGHT//2, leg_width, leg_height))
         pygame.draw.rect(self.screen, (0, 0, 255), (x + ROBOT_WIDTH//4 - leg_width, y + ROBOT_HEIGHT//2, leg_width, leg_height))
 
-    def update_display(self, response):
+    def update_display(self, action):
         self.screen.fill((255, 255, 255))
         
         # Draw the robot
         self.draw_robot()
         
-        # Display the response text
-        text_surface = self.font.render(response, True, (0, 0, 0))
+        # Display the action text
+        text_surface = self.font.render(action, True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50))
         self.screen.blit(text_surface, text_rect)
 
