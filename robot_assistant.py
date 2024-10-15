@@ -56,7 +56,7 @@ class RobotAssistant:
             elif 'right' in filtered_tokens:
                 self.position[0] = min(780, self.position[0] + 20)
                 return "Moving right 20 centimeters"
-        elif 'stop' in filtered_tokens:
+        elif 'stop' in filtered_tokens or 'abort' in filtered_tokens:
             self.running = False
             return "Stopping the program"
 

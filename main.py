@@ -35,6 +35,10 @@ class RobotSimulation:
             self.update_display(response)
             self.clock.tick(30)
 
+            if not self.robot.running:
+                print("Program is stopping...")
+                break
+
         pygame.quit()
 
     def update_display(self, response):
