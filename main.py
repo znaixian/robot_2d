@@ -3,8 +3,8 @@ from robot_assistant import RobotAssistant
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-ROBOT_RADIUS = 20
-MOVE_DISTANCE = 20  # 20 centimeters (scaled to pixels)
+ROBOT_WIDTH = 40
+ROBOT_HEIGHT = 80
 
 class RobotSimulation:
     def __init__(self):
@@ -41,11 +41,33 @@ class RobotSimulation:
 
         pygame.quit()
 
+    def draw_robot(self):
+        x, y = self.robot.position
+        
+        # Body (rectangle)
+        pygame.draw.rect(self.screen, (0, 0, 255), (x - ROBOT_WIDTH//2, y - ROBOT_HEIGHT//2, ROBOT_WIDTH, ROBOT_HEIGHT))
+        
+        # Head (smaller square)
+        head_size = ROBOT_WIDTH * 0.8
+        pygame.draw.rect(self.screen, (0, 0, 255), (x - head_size//2, y - ROBOT_HEIGHT//2 - head_size, head_size, head_size))
+        
+        # Arms (rectangles)
+        arm_width = ROBOT_WIDTH * 0.6
+        arm_height = ROBOT_HEIGHT * 0.4
+        pygame.draw.rect(self.screen, (0, 0, 255), (x - ROBOT_WIDTH//2 - arm_width, y - ROBOT_HEIGHT//4, arm_width, arm_height))
+        pygame.draw.rect(self.screen, (0, 0, 255), (x + ROBOT_WIDTH//2, y - ROBOT_HEIGHT//4, arm_width, arm_height))
+        
+        # Legs (rectangles)
+        leg_width = ROBOT_WIDTH * 0.4
+        leg_height = ROBOT_HEIGHT * 0.5
+        pygame.draw.rect(self.screen, (0, 0, 255), (x - ROBOT_WIDTH//4, y + ROBOT_HEIGHT//2, leg_width, leg_height))
+        pygame.draw.rect(self.screen, (0, 0, 255), (x + ROBOT_WIDTH//4 - leg_width, y + ROBOT_HEIGHT//2, leg_width, leg_height))
+
     def update_display(self, response):
         self.screen.fill((255, 255, 255))
         
         # Draw the robot
-        pygame.draw.circle(self.screen, (255, 0, 0), self.robot.position, ROBOT_RADIUS)
+        self.draw_robot()
         
         # Display the response text
         text_surface = self.font.render(response, True, (0, 0, 0))
