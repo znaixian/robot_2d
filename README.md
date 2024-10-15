@@ -16,14 +16,15 @@ This project implements a basic 2D robot simulation using Python and Pygame. The
 - SpeechRecognition
 - pyttsx3
 - NLTK
+- OpenAI
 
 For a complete list of dependencies, see `requirements.txt`.
 
 ## Installation
 
 1. Clone the repository:   ```
-   git clone https://github.com/yourusername/your-repo-name.git
-   cd your-repo-name   ```
+   git clone https://github.com/znaixian/robot_2d.git
+   cd robot_2d ```
 
 2. Create a virtual environment:   ```
    python -m venv venv   ```
