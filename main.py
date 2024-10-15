@@ -22,23 +22,23 @@ class RobotSimulation:
 
     def run(self):
         self.initialize_pygame()
+        self.robot.start_listening()
 
+        last_response = "Waiting for command..."
         while self.robot.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.robot.running = False
 
-            command = self.robot.listen()
-            response = self.robot.process_command(command)
-            self.robot.speak(response)
+            response = self.robot.process_command()
+            if response:
+                last_response = response
+                self.robot.speak(response)
 
-            self.update_display(response)
+            self.update_display(last_response)
             self.clock.tick(30)
 
-            if not self.robot.running:
-                print("Program is stopping...")
-                break
-
+        self.robot.stop_listening()
         pygame.quit()
 
     def draw_robot(self):

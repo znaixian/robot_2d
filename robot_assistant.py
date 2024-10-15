@@ -4,10 +4,11 @@ import nltk
 import logging
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+import threading
 
 # Download required NLTK data
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
 
 # Set up logging
 logging.basicConfig(filename='robot_assistant.log', level=logging.INFO,
@@ -19,25 +20,35 @@ class RobotAssistant:
         self.engine = pyttsx3.init()
         self.position = [400, 300]  # Starting position (center of the screen)
         self.running = True
+        self.listening = False
+        self.last_command = None
 
-    def listen(self):
-        try:
-            with sr.Microphone() as source:
-                print("Listening...")
-                audio = self.recognizer.listen(source)
-                text = self.recognizer.recognize_google(audio)
-                logging.info(f"Recognized speech: {text}")
-                return text
-        except sr.UnknownValueError:
-            logging.warning("Speech recognition could not understand audio")
-            return None
-        except sr.RequestError as e:
-            logging.error(f"Could not request results from speech recognition service; {e}")
+    def start_listening(self):
+        self.listening = True
+        threading.Thread(target=self._listen_thread, daemon=True).start()
+
+    def _listen_thread(self):
+        while self.listening:
+            try:
+                with sr.Microphone() as source:
+                    print("Listening...")
+                    audio = self.recognizer.listen(source, timeout=1, phrase_time_limit=5)
+                    text = self.recognizer.recognize_google(audio)
+                    logging.info(f"Recognized speech: {text}")
+                    self.last_command = text
+            except sr.WaitTimeoutError:
+                pass
+            except sr.UnknownValueError:
+                logging.warning("Speech recognition could not understand audio")
+            except sr.RequestError as e:
+                logging.error(f"Could not request results from speech recognition service; {e}")
+
+    def process_command(self):
+        if self.last_command is None:
             return None
 
-    def process_command(self, command):
-        if command is None:
-            return "I'm sorry, I couldn't understand that."
+        command = self.last_command
+        self.last_command = None
 
         tokens = word_tokenize(command.lower())
         stop_words = set(stopwords.words('english'))
@@ -63,10 +74,15 @@ class RobotAssistant:
         return "I'm sorry, I don't understand that command."
 
     def speak(self, text):
-        logging.info(f"Speaking: {text}")
-        self.engine.say(text)
-        self.engine.runAndWait()
+        if text:
+            logging.info(f"Speaking: {text}")
+            self.engine.say(text)
+            self.engine.runAndWait()
+
+    def stop_listening(self):
+        self.listening = False
 
 if __name__ == "__main__":
     robot = RobotAssistant()
+    robot.start_listening()
     robot.run()
