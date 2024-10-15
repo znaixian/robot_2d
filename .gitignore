@@ -104,3 +104,4 @@ venv.bak/
 # Specific to your project
 config.json
 ca-bundle-full.crt
+config.json.txt
