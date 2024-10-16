@@ -41,3 +41,11 @@ For a complete list of dependencies, see `requirements.txt`.
 ## Usage
 
 Run the main script to start the simulation:
+
+## Quitting the Simulation
+
+There are several ways to exit the simulation:
+
+1. Voice Command: Say "stop" or "abort" to the robot.
+2. Close Window: Click the close button (X) on the simulation window.
+3. Keyboard Interrupt: Press Ctrl+C in the terminal where the script is running.
